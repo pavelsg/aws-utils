@@ -11,12 +11,12 @@ EOF
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 . ${DIR}/functions.sh
 
-if [ "$1" == "" ] 
+if [ "$1" == \" ] 
 then
     print_help
 fi
 
-VOLUME_ID=$1
+INSTANCE_ID=$1
 
 if [ "$2" != "" ]
 then
@@ -27,17 +27,26 @@ else
 #    echo using default region
 fi
 
-#AWS_CMD="aws ec2 describe-volumes --filters Name="attachment.instance-id",Values="i-0675574ef9c3b0906"
-LIST_RESULT=`aws ec2 describe-volumes \
-        --region ${REGION} \
-        --volume-ids ${VOLUME_ID}`
-LIST_RET_VAL=$?
-#echo ${LIST_RESULT}
-DEV_LIST=`echo ${LIST_RESULT} | grep -o  "\"Device\": \"/dev/sd[a-z][0-9]*\"" | sed 's/"Device": //' | sed 's/"//g' | sed 's/[0-9]$//g'`
-if [ "${DEV_LIST}" == "" ]
+if [ "${REGION}" == "" ]
 then
+    >&2 echo Failed to discover default region, bailing out!
     exit 1
 fi
 
-echo ${DEV_LIST}
+AWS_CMD="aws ec2 describe-volumes \
+         --filters Name=\"attachment.instance-id\",Values=\"${INSTANCE_ID}\" \
+         --region ${REGION}"
+AWK_CMD="awk '/\"Attachments\": \[/ {VOL_ID=\"\"; MNT=\"\"} \
+              /^\s+\"VolumeId\":/ {VOL_ID=\$2} \
+              /^\s+\"Device\":/ {MNT=\$2} \
+              /\}/ {if (VOL_ID != \"\" && MNT != \"\") {print VOL_ID, MNT; VOL_ID=\"\"; MNT=\"\"}}'"
+SED_CMD="sed 's/[\",]//g'"
+
+FULL_CMD="${AWS_CMD} | ${AWK_CMD} | ${SED_CMD}"
+
+# CMD_RESULT=`${AWS_CMD}`
+#${AWS_CMD} | ${AWK_CMD}
+#echo test | ${AWK_CMD}
+eval ${FULL_CMD}
+LIST_RET_VAL=$?
 exit ${LIST_RET_VAL}

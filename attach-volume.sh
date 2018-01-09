@@ -68,3 +68,9 @@ then
 fi
 
 aws ec2 attach-volume --device /dev/sd${FIRST_LETTER} --instance-id ${INSTANCE_ID} --volume-id ${VOLUME_ID}
+AWS_RESULT=$?
+if [ "${AWS_RESULT}" -eq 0 ] 
+then
+    echo Volume ${VOLUME_ID} attached to ${INSTANCE_ID} as /dev/sd${FIRST_LETTER}
+fi
+
