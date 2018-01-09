@@ -34,5 +34,10 @@ LIST_RESULT=`aws ec2 describe-volumes \
 LIST_RET_VAL=$?
 #echo ${LIST_RESULT}
 DEV_LIST=`echo ${LIST_RESULT} | grep -o  "\"Device\": \"/dev/sd[a-z][0-9]*\"" | sed 's/"Device": //' | sed 's/"//g' | sed 's/[0-9]$//g'`
+if [ "${DEV_LIST}" == "" ]
+then
+    exit 1
+fi
+
 echo ${DEV_LIST}
 exit ${LIST_RET_VAL}
