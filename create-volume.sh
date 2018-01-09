@@ -43,18 +43,18 @@ ${FIND_CMD} >/dev/null 2>&1
 
 case $? in
     0)
-        echo Volume ${MOUNT}@${INSTANCE_ID} already exists, bailing out
+        >&2 echo Volume ${MOUNT}@${INSTANCE_ID} already exists, bailing out!
         exit 1
         ;;
     1)
-        echo Error looking for a ${MOUNT}@${INSTANCE_ID}!
+        >&2 echo Error looking for a ${MOUNT}@${INSTANCE_ID}!
         exit 1
         ;;
     2)
         echo Creating volume ${MOUNT}@${INSTANCE_ID}
         ;;
     *)
-        echo Unknown error, bailing out!
+        >&2 echo Unknown error, bailing out!
         exit 255
         ;;
 esac

@@ -18,11 +18,10 @@ fi
 
 VOLUME_ID=$1
 
-${DIR}/is-volume-attached.sh ${VOLUME_ID} &>/dev/null
-IS_RET_VAL=$?
-if [ ${IS_RET_VAL} -eq 0 ]
+INSTANCE_ID=`${DIR}/get-instance-by-volume-id.sh ${VOLUME_ID}`
+if [ "${INSTANCE_ID}" != "" ]
 then
-    echo Volume is already attached, bailing out!
+    >&2 echo Volume is already attached, bailing out!
     exit 1
 fi
 
@@ -47,18 +46,24 @@ fi
 
 if [ "${INSTANCE_ID}" == "" ]
 then
-    echo Unable to auto-discover instance-id from volume tag
+    >&2 echo Unable to auto-discover instance-id from volume tag
     exit 2
 fi
 
 #AWS_CMD="
 
 USED_LETTER=`${DIR}/get-instance-xvds.sh ${INSTANCE_ID}`
+if [ ! $? -eq 0 ]
+then
+    >&2 echo Unable to list block devices for an instance!
+    exit 2
+fi
+
 FIRST_LETTER=`${DIR}/get-first-blk-id.sh "${USED_LETTER}"`
 
 if [ "${FIRST_LETTER}" == "" ] 
 then
-    echo Unable to find free drive letter, bailing out!
+    >&2 echo Unable to find free drive letter, bailing out!
     exit 1
 fi
 

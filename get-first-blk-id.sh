@@ -15,15 +15,16 @@ fi
 
 if [ "$2" != "" ]
 then
-    echo Multiple parameters not supported.
-    echo To pass multiple block devices use quotas
+    >&2 echo Multiple parameters not supported.
+    >&2 echo To pass multiple block devices use quotas
     exit 1
 fi
 
-if [ "/dev/sd*" != "" ]
+EXPECTED_LIST="(/dev/sd[a-z] ?)+"
+if [[ ! $1 =~ ${EXPECTED_LIST} ]]
 then 
-    echo Seems like wrong parameters passed.
-    echo Expected in form of "/dev/sda /dev/sdb ..."
+    >&2 echo Seems like wrong parameters passed.
+    >&2 echo Expected in form of "/dev/sda /dev/sdb ..."
     exit 2
 fi
 
