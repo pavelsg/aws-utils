@@ -18,14 +18,7 @@ fi
 
 INSTANCE_ID=$1
 
-if [ "$2" != "" ]
-then
-    REGION=$2
-#    echo region specified: $2
-else
-    REGION=`aws configure get default.region`
-#    echo using default region
-fi
+get_region $2
 
 RESULT=`aws ec2 describe-instances --region ${REGION} --instance-ids ${INSTANCE_ID}`
 echo ${RESULT} | sed 's/.*"AvailabilityZone": "//' | sed 's/".*//'

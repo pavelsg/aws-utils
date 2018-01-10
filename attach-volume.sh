@@ -18,21 +18,14 @@ fi
 
 VOLUME_ID=$1
 
-INSTANCE_ID=`${DIR}/get-instance-by-volume-id.sh ${VOLUME_ID}`
+INSTANCE_ID=`${DIR}/get-instance-by-attached-volume.sh ${VOLUME_ID}`
 if [ "${INSTANCE_ID}" != "" ]
 then
-    >&2 echo Volume is already attached, bailing out!
+    error_print "Volume ${VOLUME_ID} is already attached, bailing out!"
     exit 1
 fi
 
-if [ "$3" != "" ]
-then
-    REGION=$3
-#    echo region specified: $2
-else
-    REGION=`aws configure get default.region`
-#    echo using default region
-fi
+get_region $3
 
 if [ "$2" != "" ]
 then

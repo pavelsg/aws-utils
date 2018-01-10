@@ -19,14 +19,7 @@ fi
 MOUNT=$1
 INSTANCE_ID=$2
 
-if [ "$3" != "" ]
-then
-    REGION=$3
-#    echo region specified: $2
-else
-    REGION=`aws configure get default.region`
-#    echo using default region
-fi
+get_region $3
 
 #AWS_CMD="
 FIND_RESULT=`aws ec2 describe-volumes \
@@ -36,7 +29,7 @@ FIND_RESULT=`aws ec2 describe-volumes \
             Name=tag-value,Values=\"${INSTANCE_ID}\" \
             Name=tag-key,Values=\"mount\" \
             Name=tag-value,Values=\"${MOUNT}\" \
-        --query 'Volumes[*].{ID:VolumeId,Tag:Tags}'`
+        --query \"Volumes[*].{ID:VolumeId,Tag:Tags}\"`
 
 #RESULT=`${AWS_CMD}`
 RESULT=`echo ${FIND_RESULT} | sed 's/.*"ID": "//' | sed 's/".*//'`

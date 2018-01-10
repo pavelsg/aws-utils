@@ -32,13 +32,13 @@ TYPE=$1
 MOUNT=$3
 INSTANCE_ID=$4
 
-FIND_ERR=`${DIR}/find-instance-by-id.sh ${INSTANCE_ID} 2>&1 >/dev/null`
+FIND_ERR=`${DIR}/is-instance-exists.sh ${INSTANCE_ID} 2>&1 >/dev/null`
 if [ ! $? -eq 0 ]; then
     echo "${FIND_ERR}"
     exit $?
 fi
 
-FIND_CMD="${DIR}/find-volume-by-tag.sh ${MOUNT} ${INSTANCE_ID}"
+FIND_CMD="${DIR}/get-volume-by-mnt-instance.sh ${MOUNT} ${INSTANCE_ID}"
 ${FIND_CMD} >/dev/null 2>&1
 
 case $? in

@@ -18,14 +18,7 @@ fi
 
 VOLUME_ID=$1
 
-if [ "$2" != "" ]
-then
-    REGION=$2
-#    echo region specified: $2
-else
-    REGION=`aws configure get default.region`
-#    echo using default region
-fi
+get_region $2
 
 #AWS_CMD="
 FIND_RESULT=`aws ec2 describe-volumes \
@@ -34,20 +27,16 @@ FIND_RESULT=`aws ec2 describe-volumes \
 FIND_RET_VAL=$?
 
 if [ ! ${FIND_RET_VAL} -eq 0 ]; then
-    echo Error! Unable to find volume! >&2
+    error_print "Error! Unable to find volume!"
     exit ${FIND_RET_VAL}
 fi
-
-#echo ---
-#echo ${FIND_RESULT}
-#echo ---
 
 echo ${FIND_RESULT} | grep "\"InstanceId\": \"" >/dev/null 2>&1
 GREP_RET_VAL=$?
 
 if [ "${FIND_RET_VAL}${GREP_RET_VAL}" == "01" ]
 then
-    echo Volume ${VOLUME_ID} is found but not attached to an instance! >&2
+    error_print "Volume ${VOLUME_ID} is found but not attached to an instance!"
     exit 1
 fi
 
