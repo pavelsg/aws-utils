@@ -27,5 +27,5 @@ else
 #    echo using default region
 fi
 
-RESULT=`aws ec2 describe-instances --instance-ids ${INSTANCE_ID}`
+RESULT=`aws ec2 describe-instances --region ${REGION} --instance-ids ${INSTANCE_ID}`
 echo ${RESULT} | sed 's/.*"AvailabilityZone": "//' | sed 's/".*//'

@@ -3,7 +3,7 @@
 function print_help() {
     echo Parameters missing:
     cat <<EOF
-    Usage: $0 <size> <type> <mount> <instance-id> [<region>]
+    Usage: $0 <type> <size> <mount> <instance-id> [<region>]
            <size> - size of new volume in Gb
            <type> - standard, gp2
 EOF
@@ -27,8 +27,8 @@ else
 #    echo using default region
 fi
 
-SIZE=$1
-TYPE=$2
+SIZE=$2
+TYPE=$1
 MOUNT=$3
 INSTANCE_ID=$4
 
