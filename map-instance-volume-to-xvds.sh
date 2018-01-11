@@ -11,7 +11,7 @@ EOF
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 . ${DIR}/functions.sh
 
-if [ "$1" == \" ] 
+if [ "$1" == "" ] 
 then
     print_help
 fi

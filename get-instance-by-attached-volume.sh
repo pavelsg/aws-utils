@@ -28,6 +28,7 @@ FIND_RET_VAL=$?
 
 if [ ! ${FIND_RET_VAL} -eq 0 ]; then
     error_print "Error! Unable to find volume!"
+    exit 2
     exit ${FIND_RET_VAL}
 fi
 
