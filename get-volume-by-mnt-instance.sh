@@ -29,7 +29,7 @@ FIND_RESULT=`aws ec2 describe-volumes \
             Name=tag-value,Values=\"${INSTANCE_ID}\" \
             Name=tag-key,Values=\"mount\" \
             Name=tag-value,Values=\"${MOUNT}\" \
-        --query \"Volumes[*].{ID:VolumeId,Tag:Tags}\"`
+        --query 'Volumes[*].{ID:VolumeId,Tag:Tags}'`
 
 #RESULT=`${AWS_CMD}`
 RESULT=`echo ${FIND_RESULT} | sed 's/.*"ID": "//' | sed 's/".*//'`

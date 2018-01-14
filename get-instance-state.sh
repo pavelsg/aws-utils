@@ -14,6 +14,6 @@ INSTANCE_ID=$1
 AWS_CMD="aws ec2 describe-instances \
          --filter Name=\"instance-id\",Values=\"${INSTANCE_ID}\" \
          --output text \
-         --query \"Reservations[0].{State:Instances[0].State.Name}\""
+         --query 'Reservations[0].{State:Instances[0].State.Name}'"
 
 eval ${AWS_CMD}
