@@ -14,8 +14,10 @@ PARTITION=$2
 FS_TYPE=$3
 BLKNAME=`echo ${PARTITION} | sed 's/[0-9]$//'`
 
-if [ "${MOUNT}" != "swap" ]; then
+if [ "${FS_TYPE}" != "swap" ]; then
     MKFS_OUT=`${SSH_CMD} -t ubuntu@${IP} "sudo mkfs -F -t ${FS_TYPE} ${PARTITION} | grep UUID" 2>/dev/null`
+else
+    MKFS_OUT=`${SSH_CMD} -t ubuntu@${IP} "sudo mkswap ${PARTITION} | grep UUID | sed 's/=/ /g'" 2>/dev/null`
 fi
 
-echo ${MKFS_OUT} | awk '{print $NF}' 
+echo ${MKFS_OUT} | awk '{print $NF}' | sed 's/\r/\n/g'

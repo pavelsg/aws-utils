@@ -11,10 +11,22 @@ get_region $3
 
 INSTANCE_ID=$1
 VOL_LIST=$2
+IP=`${DIR}/get-instance-int-ip.sh ${INSTANCE_ID}`
+export BATCH_MODE=1
 
 cat ${VOL_LIST} | \
     awk -v INSTANCE_ID=${INSTANCE_ID} -v REGION=${REGION} '{print INSTANCE_ID " " $0 " " REGION}' |\
     xargs -I % bash -c '${DIR}/setup-instance-volume.sh %'
+
+echo "Storage provisioning completed, rebooting instance ${INSTANCE_ID}"
+CHECK_OUT=`${SSH_CMD} -t ubuntu@${IP} "[ -f part.sh ] && echo OK" | sed 's/\r/\n/' 2>/dev/null`
+
+if [ "${CHECK_OUT}" == "OK" ]; then
+ECHO_OUT=`${SSH_CMD} -t ubuntu@${IP} "echo init1 > part_batch.sh && cat part.sh >>part_batch.sh && rm -rf part.sh 2>/dev/null" 2>/dev/null`
+REBOOT_OUT=`${SSH_CMD} -t ubuntu@${IP} "echo reboot >> part_batch.sh && sudo bash part_batch.sh 2>/dev/null" 2>/dev/null`
+else
+REBOOT_OUT=`${SSH_CMD} -t ubuntu@${IP} "sudo reboot" 2>/dev/null`
+fi
 
 exit 0
 

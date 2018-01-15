@@ -16,6 +16,7 @@ MOUNT=$4
 
 #echo "${DIR}/create-volume.sh ${TYPE} ${SIZE} ${MOUNT} ${INSTANCE_ID} ${REGION}"
     #printf 'Type: %s, Size: %s, Mount: %s\n' "${TYPE}" "${SIZE}" "${MOUNT}"
+    echo "${DIR}/create-volume.sh ${TYPE} ${SIZE} ${MOUNT} ${INSTANCE_ID} ${REGION}"
     CV_OUT=`${DIR}/create-volume.sh ${TYPE} ${SIZE} ${MOUNT} ${INSTANCE_ID} ${REGION} | awk '/Created volume: / {print $NF}' `
     if [ $? -ne 0 ]
     then
@@ -23,15 +24,20 @@ MOUNT=$4
         exit 1
     fi
     sleep 10
+    echo "${DIR}/attach-volume.sh ${CV_OUT} ${INSTANCE_ID} ${REGION}"
     ATT_OUT=`${DIR}/attach-volume.sh ${CV_OUT} ${INSTANCE_ID} ${REGION}`
     sleep 5
+    echo "${DIR}/create-partition.sh ${CV_OUT} ${REGION}"
     PART_OUT=`${DIR}/create-partition.sh ${CV_OUT} ${REGION}`
+    echo "${DIR}/get-volume-info.sh ${CV_OUT} ${REGION}"
     VOL_INFO=`${DIR}/get-volume-info.sh ${CV_OUT} ${REGION}`
     eval "${VOL_INFO}"
     FS_TYPE="ext4"
     if [ "${MOUNT}" == "swap" ]; then
         FS_TYPE=swap
     fi
-    MKFS_OUT=`${DIR}/create-file-system.sh ${IP} ${BLKNAME} ${FS_TYPE}`
-    MOUNT_OUT=`${DIR}/setup-mount-point.sh ${IP} ${BLKNAME} ${FS_TYPE} ${MKFS_OUT} ${MOUNT}`
+    echo "${DIR}/create-file-system.sh ${IP} ${DEVNAME} ${FS_TYPE}"
+    MKFS_OUT=`${DIR}/create-file-system.sh ${IP} ${DEVNAME} ${FS_TYPE}`
+    echo "${DIR}/setup-mount-point.sh ${IP} ${DEVNAME} ${FS_TYPE} ${MKFS_OUT} ${MOUNT}"
+    MOUNT_OUT=`${DIR}/setup-mount-point.sh ${IP} ${DEVNAME} ${FS_TYPE} ${MKFS_OUT} ${MOUNT}`
 
