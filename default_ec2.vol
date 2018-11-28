@@ -1,0 +1,5 @@
+standard 1 /tmp
+gp2 2 swap
+standard 4 /var
+standard 2 /home
+gp2 10 /export/storage0
